@@ -1,0 +1,6 @@
+.vs/
+out/
+.vscode
+build/
+local_test/
+CMakeSettings.json
