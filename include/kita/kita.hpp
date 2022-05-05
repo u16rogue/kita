@@ -30,7 +30,7 @@ namespace kita
 	class kita_instance
 	{
 	public:
-		kita_instance(const char * title_, int width_, int height_, events::on_glfwerr_cb_t err_hnd_ = nullptr);
+		kita_instance(const char * title_, int width_, int height_, events::details::on_glfwerr_cb_t err_hnd_ = nullptr);
 		kita_instance(kita_instance &) = delete;
 		kita_instance(const kita_instance &) = delete;
 		kita_instance(kita_instance &&) = delete;
@@ -59,10 +59,19 @@ namespace kita
 		auto title(void) -> const char *;
 
 		// Registers an on_close event
-		auto callback(events::on_close_cb_t handler) -> kita_instance &;
-		auto callback(events::on_render_cb_t handler) -> kita_instance &;
-		auto callback(events::on_glfwerr_cb_t handler) -> kita_instance &;
-		auto callback(events::on_key_cb_t handler) -> kita_instance &;
+		auto callback(events::details::on_close_cb_t handler) -> kita_instance &;
+		auto callback(events::details::on_render_cb_t handler) -> kita_instance &;
+		auto callback(events::details::on_glfwerr_cb_t handler) -> kita_instance &;
+		auto callback(events::details::on_key_cb_t handler) -> kita_instance &;
+
+		template <typename... vargs_t> requires (sizeof...(vargs_t) != 0)
+		auto callback(vargs_t... vargs)
+		{
+			if (state == kita_state::INITIALIZED)	
+				(callback(vargs), ...);
+
+			return *this;
+		}
 
 		template <typename T>
 		auto operator+=(T rhs) -> kita_instance &
@@ -87,10 +96,10 @@ namespace kita
 
 		GLFWwindow * window {};
 
-		events::on_close_cb_t  on_close_cb  {};
-		events::on_render_cb_t on_render_cb {};
-		events::on_key_cb_t    on_key_cb    {};
-		inline static events::on_glfwerr_cb_t on_glfwerr  {};
+		events::details::on_close_cb_t  on_close_cb  {};
+		events::details::on_render_cb_t on_render_cb {};
+		events::details::on_key_cb_t    on_key_cb    {};
+		inline static events::details::on_glfwerr_cb_t on_glfwerr  {};
 
 	private:
 		int trans_w = width, trans_h = height, trans_x = -1, trans_y = -1;

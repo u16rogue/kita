@@ -10,7 +10,7 @@ static bool kita_glfw_init = GLFW_FALSE;
 // static std::unordered_map <GLFWwindow *, kita::kita_instance *> kita_error_callbacks;
 static std::unordered_map <GLFWwindow *, kita::kita_instance *> kita_key_callbacks;
 
-kita::kita_instance::kita_instance(const char * title_, int width_, int height_, events::on_glfwerr_cb_t err_hnd_)
+kita::kita_instance::kita_instance(const char * title_, int width_, int height_, events::details::on_glfwerr_cb_t err_hnd_)
 	: class_name(title_), width(width_), height(height_)
 {
 	const std::lock_guard _lg(mut);
@@ -92,7 +92,7 @@ auto kita::kita_instance::run() -> kita_instance &
 				events::on_close e {};
 				e.cancel = false;
 				e.instance = this;
-				e.type = events::event_type::ON_CLOSE;
+				e.type = events::details::event_type::ON_CLOSE;
 				on_close_cb(&e);
 				if (e.cancel)
 				{
@@ -126,7 +126,7 @@ auto kita::kita_instance::run() -> kita_instance &
 			if (on_render_cb)
 			{
 				events::on_render e {};
-				e.type = events::event_type::ON_RENDER;
+				e.type = events::details::event_type::ON_RENDER;
 				e.instance = this;
 				on_render_cb(&e);
 			}
@@ -141,7 +141,7 @@ auto kita::kita_instance::run() -> kita_instance &
 			if (on_render_cb)
 			{
 				events::on_render e {};
-				e.type = events::event_type::ON_RENDER;
+				e.type = events::details::event_type::ON_RENDER;
 				e.instance = this;
 				on_render_cb(&e);
 			}
@@ -318,7 +318,7 @@ auto kita::kita_instance::title(void) -> const char *
 	return wnd_title;
 }
 
-auto kita::kita_instance::callback(events::on_close_cb_t handler) -> kita_instance &
+auto kita::kita_instance::callback(events::details::on_close_cb_t handler) -> kita_instance &
 {
 	if (state == kita_state::INITIALIZED)
 		on_close_cb = handler;
@@ -326,7 +326,7 @@ auto kita::kita_instance::callback(events::on_close_cb_t handler) -> kita_instan
 	return *this;
 }
 
-auto kita::kita_instance::callback(events::on_render_cb_t handler) -> kita_instance &
+auto kita::kita_instance::callback(events::details::on_render_cb_t handler) -> kita_instance &
 {
 	if (state == kita_state::INITIALIZED)
 		on_render_cb = handler;
@@ -334,14 +334,14 @@ auto kita::kita_instance::callback(events::on_render_cb_t handler) -> kita_insta
 	return *this;
 }
 
-auto kita::kita_instance::callback(events::on_glfwerr_cb_t handler) -> kita_instance &
+auto kita::kita_instance::callback(events::details::on_glfwerr_cb_t handler) -> kita_instance &
 {
 	on_glfwerr = handler;
 	// kita_error_callbacks[window] = this;
 	return *this;
 }
 
-auto kita::kita_instance::callback(events::on_key_cb_t handler) -> kita_instance &
+auto kita::kita_instance::callback(events::details::on_key_cb_t handler) -> kita_instance &
 {
 	if (state == kita_state::INITIALIZED)
 	{
@@ -405,10 +405,10 @@ auto kita::kita_instance::glfw_error_dispatcher(int err_code, const char * descr
 	if (on_glfwerr)
 	{
 		events::on_glfwerr e {};
-		e.error = err_code;
+		e.error       = err_code;
 		e.description = description;
-		e.instance = nullptr;
-		e.type = events::event_type::GLFW_ERROR;
+		e.instance    = nullptr;
+		e.type        = events::details::event_type::GLFW_ERROR;
 		on_glfwerr(&e);
 	}
 }
@@ -419,7 +419,7 @@ auto kita::kita_instance::glfw_key_dispatcher(GLFWwindow * window, int key, int 
 	if (p != kita_key_callbacks.end() && p->second)
 	{
 		events::on_key e {};
-		e.type     = events::event_type::GLFW_KEY;
+		e.type     = events::details::event_type::GLFW_KEY;
 		e.instance = p->second;
 		e.action   = action;
 		e.key      = key;
