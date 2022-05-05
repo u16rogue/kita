@@ -65,10 +65,10 @@ namespace kita
 		auto callback(events::details::on_key_cb_t handler) -> kita_instance &;
 
 		template <typename... vargs_t> requires (sizeof...(vargs_t) != 0)
-		auto callback(vargs_t... vargs)
+		auto callbacks(vargs_t... vargs) -> kita_instance &
 		{
 			if (state == kita_state::INITIALIZED)	
-				(callback(vargs), ...);
+				((callback(vargs)), ...);
 
 			return *this;
 		}

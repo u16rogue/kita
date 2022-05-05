@@ -136,7 +136,7 @@ auto kita::kita_instance::run() -> kita_instance &
 		else if (mode == kita_mode::OVERLAY)
 		{
 			static auto & io = ImGui::GetIO();
-			static bool last_wantcapture = -1;
+			static int last_wantcapture = -1;
 
 			if (on_render_cb)
 			{
