@@ -85,6 +85,8 @@ auto kita::kita_instance::run() -> kita_instance &
 
 	while (state == kita_state::RUN)
 	{
+		glfwPollEvents();
+
 		if (glfwWindowShouldClose(window))
 		{
 			if (on_close_cb)
@@ -107,6 +109,17 @@ auto kita::kita_instance::run() -> kita_instance &
 			{
 				destroy();
 			}
+		}
+
+		if (on_pre_render_cb)
+		{
+			events::on_pre_render opr {};
+			opr.instance = this;
+			opr.render   = true;
+			opr.type     = events::details::event_type::ON_RENDER;
+			on_pre_render_cb(&opr);
+			if (!opr.render)
+				continue;
 		}
 
 		ImGui_ImplOpenGL3_NewFrame();
@@ -159,8 +172,6 @@ auto kita::kita_instance::run() -> kita_instance &
 		kita_glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);
-
-		glfwPollEvents();
 	}
 
 	if (state == kita_state::REQ_DESTROY)
@@ -351,6 +362,14 @@ auto kita::kita_instance::callback(events::details::on_key_cb_t handler) -> kita
 	}
 
 	return *this;	
+}
+
+auto kita::kita_instance::callback(events::details::on_pre_render_cb_t handler) -> kita_instance &
+{
+	if (state == kita_state::INITIALIZED)
+		on_pre_render_cb = handler;
+
+	return *this;
 }
 
 kita::kita_instance::operator bool() const noexcept

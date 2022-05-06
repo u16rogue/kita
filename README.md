@@ -46,6 +46,7 @@ auto main() -> int
 * on_render
 * on_key
 * on_glfwerr
+* on_pre_render
 
 ## Display modes
 * Overlay mode - The entire viewport is used for rendering, the on_render callback is used to render to the entire screen.

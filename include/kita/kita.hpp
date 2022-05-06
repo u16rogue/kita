@@ -63,6 +63,7 @@ namespace kita
 		auto callback(events::details::on_render_cb_t handler) -> kita_instance &;
 		auto callback(events::details::on_glfwerr_cb_t handler) -> kita_instance &;
 		auto callback(events::details::on_key_cb_t handler) -> kita_instance &;
+		auto callback(events::details::on_pre_render_cb_t handler) -> kita_instance &;
 
 		template <typename... vargs_t> requires (sizeof...(vargs_t) != 0)
 		auto callbacks(vargs_t... vargs) -> kita_instance &
@@ -96,9 +97,10 @@ namespace kita
 
 		GLFWwindow * window {};
 
-		events::details::on_close_cb_t  on_close_cb  {};
-		events::details::on_render_cb_t on_render_cb {};
-		events::details::on_key_cb_t    on_key_cb    {};
+		events::details::on_close_cb_t      on_close_cb  {};
+		events::details::on_render_cb_t     on_render_cb {};
+		events::details::on_key_cb_t        on_key_cb    {};
+		events::details::on_pre_render_cb_t on_pre_render_cb {};
 		inline static events::details::on_glfwerr_cb_t on_glfwerr  {};
 
 	private:

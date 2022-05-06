@@ -12,7 +12,7 @@ namespace kita::events
 	struct on_render;
 	struct on_key;
 	struct on_glfwerr;
-
+	struct on_pre_render; 
 	namespace details 
 	{
 
@@ -22,7 +22,8 @@ namespace kita::events
 			ON_CLOSE,
 			ON_RENDER,
 			GLFW_ERROR,
-			GLFW_KEY
+			GLFW_KEY,
+			ON_PRE_RENDER,
 		};
 
 		struct basic_event
@@ -35,6 +36,7 @@ namespace kita::events
 		using on_render_cb_t = void(*)(on_render *);
 		using on_key_cb_t = void(*)(on_key *);
 		using on_glfwerr_cb_t = void(*)(on_glfwerr *);
+		using on_pre_render_cb_t = void(*)(on_pre_render *);
 	}
 
 	// ----------------------------------------------------------
@@ -73,4 +75,9 @@ namespace kita::events
 	};
 
 	// ----------------------------------------------------------
+
+	struct on_pre_render : public details::basic_event
+	{
+		bool render = true;
+	};
 };
